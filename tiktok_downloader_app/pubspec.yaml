@@ -23,7 +23,7 @@ dependencies:
   # Device & Storage
   path_provider: ^2.1.2
   permission_handler: ^11.3.0
-  image_gallery_saver_plus: ^3.0.4
+  gal: ^2.3.0
 
 dev_dependencies:
   flutter_test:

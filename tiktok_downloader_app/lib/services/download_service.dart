@@ -1,22 +1,18 @@
 import 'dart:typed_data';
 import 'package:dio/dio.dart';
-import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:gal/gal.dart';
 import '../models/tiktok_post.dart';
 
 class DownloadService {
   final Dio _dio = Dio();
 
-  /// Xin quyền truy cập thư viện ảnh của thiết bị Android
+  /// Xin quyền truy cập thư viện ảnh của thiết bị
   Future<bool> requestStoragePermission() async {
-    // Android 13+ (API 33+) dùng photos, Android cũ dùng storage
-    if (await Permission.photos.request().isGranted) {
-      return true;
+    final hasAccess = await Gal.hasAccess();
+    if (!hasAccess) {
+      return await Gal.requestAccess();
     }
-    if (await Permission.storage.request().isGranted) {
-      return true;
-    }
-    return false;
+    return true;
   }
 
   /// Tải danh sách ảnh được chọn và lưu vào Thư viện ảnh / Bộ sưu tập
@@ -48,15 +44,13 @@ class DownloadService {
         final Uint8List bytes = Uint8List.fromList(response.data);
         final fileName = 'TikTok_${post.author}_${post.postId}_${img.index + 1}';
 
-        final result = await ImageGallerySaverPlus.saveImage(
+        await Gal.putImageBytes(
           bytes,
           name: fileName,
-          quality: 100,
+          album: 'TikTok Downloader',
         );
 
-        if (result != null && (result['isSuccess'] == true || result['isSuccess'] == 1)) {
-          savedSuccess++;
-        }
+        savedSuccess++;
       } catch (e) {
         // Tiếp tục tải các ảnh còn lại nếu một ảnh bị lỗi mạng
       }
