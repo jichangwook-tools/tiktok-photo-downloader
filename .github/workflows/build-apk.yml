@@ -35,12 +35,26 @@ jobs:
           flutter create --platforms=android --org com.jichangwook --project-name tiktok_photo_downloader .
           
           python3 -c "
-          with open('android/app/src/main/AndroidManifest.xml', 'r') as f:
-              c = f.read()
-          perms = '''    <uses-permission android:name=\"android.permission.INTERNET\" />\n    <uses-permission android:name=\"android.permission.READ_EXTERNAL_STORAGE\" />\n    <uses-permission android:name=\"android.permission.WRITE_EXTERNAL_STORAGE\" />\n    <uses-permission android:name=\"android.permission.READ_MEDIA_IMAGES\" />\n'''
-          c = c.replace('<application', perms + '    <application')
-          with open('android/app/src/main/AndroidManifest.xml', 'w') as f:
-              f.write(c)
+          import os, glob
+
+          manifest_path = 'android/app/src/main/AndroidManifest.xml'
+          if os.path.exists(manifest_path):
+              with open(manifest_path, 'r') as f:
+                  c = f.read()
+              perms = '''    <uses-permission android:name=\"android.permission.INTERNET\" />\n    <uses-permission android:name=\"android.permission.READ_EXTERNAL_STORAGE\" />\n    <uses-permission android:name=\"android.permission.WRITE_EXTERNAL_STORAGE\" />\n    <uses-permission android:name=\"android.permission.READ_MEDIA_IMAGES\" />\n'''
+              c = c.replace('<application', perms + '    <application')
+              with open(manifest_path, 'w') as f:
+                  f.write(c)
+
+          for bg_file in glob.glob('android/app/build.gradle*'):
+              with open(bg_file, 'r') as f:
+                  bg = f.read()
+              bg = bg.replace('compileSdk = flutter.compileSdkVersion', 'compileSdk = 34')
+              bg = bg.replace('compileSdkVersion flutter.compileSdkVersion', 'compileSdkVersion 34')
+              bg = bg.replace('targetSdk = flutter.targetSdkVersion', 'targetSdk = 34')
+              bg = bg.replace('targetSdkVersion flutter.targetSdkVersion', 'targetSdkVersion 34')
+              with open(bg_file, 'w') as f:
+                  f.write(bg)
           "
 
       - name: Install Dependencies

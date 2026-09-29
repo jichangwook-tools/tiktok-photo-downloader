@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import '../models/tiktok_post.dart';
 import '../services/tiktok_service.dart';
 import '../services/download_service.dart';
@@ -110,13 +109,19 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _showToast(String msg) {
-    Fluttertoast.showToast(
-      msg: msg,
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM,
-      backgroundColor: AppTheme.cardHover,
-      textColor: AppTheme.textMain,
-      fontSize: 13.0,
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          msg,
+          style: const TextStyle(color: AppTheme.textMain, fontSize: 13),
+        ),
+        backgroundColor: AppTheme.cardHover,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        duration: const Duration(seconds: 2),
+      ),
     );
   }
 
