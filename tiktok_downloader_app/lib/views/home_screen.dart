@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../models/tiktok_post.dart';
 import '../services/tiktok_service.dart';
@@ -386,7 +385,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       placeholder: (context, url) => Container(
                         color: AppTheme.cardHover,
                         child: const Center(
-                          child: SpinKitPulse(color: AppTheme.tiktokRed, size: 20),
+                          child: SizedBox(
+                            width: 22,
+                            height: 22,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: AppTheme.tiktokRed,
+                            ),
+                          ),
                         ),
                       ),
                       errorWidget: (context, url, error) => Container(
@@ -492,7 +498,14 @@ class _HomeScreenState extends State<HomeScreen> {
       padding: EdgeInsets.symmetric(vertical: 40),
       child: Column(
         children: [
-          SpinKitFadingCube(color: AppTheme.tiktokRed, size: 36),
+          SizedBox(
+            width: 36,
+            height: 36,
+            child: CircularProgressIndicator(
+              strokeWidth: 3,
+              color: AppTheme.tiktokRed,
+            ),
+          ),
           SizedBox(height: 20),
           Text(
             'Đang trích xuất ảnh không logo...',
