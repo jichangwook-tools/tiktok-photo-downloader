@@ -29,19 +29,6 @@ jobs:
           channel: 'stable'
           cache: true
 
-      - name: Setup Android Project Files
-        working-directory: ./tiktok_downloader_app
-        run: |
-          # Tự động đồng bộ cấu hình Gradle chuẩn Flutter
-          flutter create --platforms=android --org com.jichangwook --project-name tiktok_photo_downloader .
-          
-          # Cấp quyền lưu trữ và internet vào AndroidManifest
-          sed -i '/<manifest/a \    <uses-permission android:name="android.permission.INTERNET" />\n    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />\n    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />\n    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />' android/app/src/main/AndroidManifest.xml
-          
-          # Đảm bảo AndroidX được bật
-          echo "android.useAndroidX=true" >> android/gradle.properties
-          echo "android.enableJetifier=true" >> android/gradle.properties
-
       - name: Install Dependencies
         working-directory: ./tiktok_downloader_app
         run: flutter pub get
