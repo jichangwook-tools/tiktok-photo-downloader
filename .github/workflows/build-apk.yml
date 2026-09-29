@@ -25,9 +25,23 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.22.x'
           channel: 'stable'
           cache: true
+
+      - name: Generate Official Android Project
+        working-directory: ./tiktok_downloader_app
+        run: |
+          rm -rf android
+          flutter create --platforms=android --org com.jichangwook --project-name tiktok_photo_downloader .
+          
+          python3 -c "
+          with open('android/app/src/main/AndroidManifest.xml', 'r') as f:
+              c = f.read()
+          perms = '''    <uses-permission android:name=\"android.permission.INTERNET\" />\n    <uses-permission android:name=\"android.permission.READ_EXTERNAL_STORAGE\" />\n    <uses-permission android:name=\"android.permission.WRITE_EXTERNAL_STORAGE\" />\n    <uses-permission android:name=\"android.permission.READ_MEDIA_IMAGES\" />\n'''
+          c = c.replace('<application', perms + '    <application')
+          with open('android/app/src/main/AndroidManifest.xml', 'w') as f:
+              f.write(c)
+          "
 
       - name: Install Dependencies
         working-directory: ./tiktok_downloader_app
