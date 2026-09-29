@@ -65,7 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
     });
 
     try {
-      final post = await TikTokService.fetchPostInfo(url);
+      final post = await TikTokService.fetchPostInfo(cleanUrl);
       setState(() {
         _currentPost = post;
         _isLoading = false;
