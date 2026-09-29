@@ -49,8 +49,8 @@ jobs:
           for bg_file in glob.glob('android/app/build.gradle*'):
               with open(bg_file, 'r') as f:
                   bg = f.read()
-              bg = bg.replace('compileSdk = flutter.compileSdkVersion', 'compileSdk = 34')
-              bg = bg.replace('compileSdkVersion flutter.compileSdkVersion', 'compileSdkVersion 34')
+              bg = bg.replace('compileSdk = flutter.compileSdkVersion', 'compileSdk = 36')
+              bg = bg.replace('compileSdkVersion flutter.compileSdkVersion', 'compileSdkVersion 36')
               bg = bg.replace('targetSdk = flutter.targetSdkVersion', 'targetSdk = 34')
               bg = bg.replace('targetSdkVersion flutter.targetSdkVersion', 'targetSdkVersion 34')
               with open(bg_file, 'w') as f:
@@ -63,7 +63,7 @@ jobs:
 
       - name: Build APK (Release)
         working-directory: ./tiktok_downloader_app
-        run: flutter build apk --release
+        run: flutter build apk --release --no-tree-shake-icons
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
