@@ -103,8 +103,13 @@ function sanitizeName(str) {
   return (str || '').replace(/[<>:"/\\|?*\x00-\x1f]/g, '_').slice(0, 40).trim();
 }
 
+function extractTikTokUrl(text) {
+  const m = (text || '').match(/https?:\/\/(?:[a-zA-Z0-9_-]+\.)?tiktok\.com\/[^\s]+/i);
+  return m ? m[0] : (text || '').trim();
+}
+
 function extractPostId(url) {
-  const m = (url || '').match(/\/photo\/(\d+)/);
+  const m = (url || '').match(/\/(?:photo|video)\/(\d+)/);
   return m ? m[1] : null;
 }
 
@@ -187,7 +192,7 @@ elBtnPaste.addEventListener('click', async () => {
   try {
     const text = await navigator.clipboard.readText();
     if (text) {
-      elUrlInput.value = text.trim();
+      elUrlInput.value = extractTikTokUrl(text);
       elBtnClearInput.classList.remove('hidden');
       handleFetchTrigger();
     }
@@ -220,18 +225,18 @@ elBtnUseTab.addEventListener('click', () => {
 });
 
 // ── CORE EXTRACTION: Multi-Tier in Popup (Direct & Instant) ───────────────────
-async function extractPhotosDirectly(rawUrl) {
-  const postId = extractPostId(rawUrl);
-  if (!postId) {
-    throw new Error('Link không hợp lệ. Vui lòng nhập link bài ảnh TikTok dạng: tiktok.com/@user/photo/...');
+async function extractPhotosDirectly(rawInput) {
+  const cleanUrl = extractTikTokUrl(rawInput);
+  if (!cleanUrl || !cleanUrl.includes('tiktok.com')) {
+    throw new Error('Link không hợp lệ. Vui lòng nhập link bài ảnh TikTok (vd: vt.tiktok.com/... hoặc tiktok.com/@user/photo/...)');
   }
 
-  const author = extractAuthor(rawUrl) || 'tiktok';
-  const canonicalUrl = `https://www.tiktok.com/@${author}/photo/${postId}`;
+  const postId = extractPostId(cleanUrl);
+  const author = extractAuthor(cleanUrl) || 'tiktok';
 
   // ── Strategy 1: Gọi TikWM API trực tiếp từ popup (0.3s, ảnh gốc full HD) ───
   try {
-    const apiUrl = `https://www.tikwm.com/api/?url=${encodeURIComponent(canonicalUrl)}`;
+    const apiUrl = `https://www.tikwm.com/api/?url=${encodeURIComponent(cleanUrl)}`;
     const apiRes = await fetch(apiUrl, { method: 'GET' });
     if (apiRes.ok) {
       const json = await apiRes.json();
@@ -239,7 +244,7 @@ async function extractPhotosDirectly(rawUrl) {
         const item = json.data;
         return {
           success: true,
-          postId,
+          postId: item.id || postId || 'unknown',
           author: item.author?.unique_id || author,
           authorName: item.author?.nickname || author,
           title: item.title || '',

@@ -29,13 +29,14 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
 // ── Universal Photo Info Resolver (Multi-Tier) ─────────────────────────────────
 async function getPhotoInfoUniversal(rawUrl) {
-  const postId = extractPostId(rawUrl);
-  if (!postId) {
-    throw new Error('Link không hợp lệ. Cần link bài ảnh TikTok dạng: tiktok.com/@user/photo/...');
+  const cleanUrl = extractTikTokUrl(rawUrl);
+  if (!cleanUrl || !cleanUrl.includes('tiktok.com')) {
+    throw new Error('Link không hợp lệ. Cần link TikTok (vd: vt.tiktok.com/... hoặc tiktok.com/@user/photo/...)');
   }
 
-  const author = extractAuthor(rawUrl) || 'tiktok';
-  const canonicalUrl = `https://www.tiktok.com/@${author}/photo/${postId}`;
+  const postId = extractPostId(cleanUrl);
+  const author = extractAuthor(cleanUrl) || 'tiktok';
+  const canonicalUrl = postId ? `https://www.tiktok.com/@${author}/photo/${postId}` : cleanUrl;
 
   // ── Tier 1: Kiểm tra các tab TikTok đang mở trên trình duyệt ─────────────────
   try {
@@ -283,9 +284,13 @@ async function fetchViaTemporaryTab(pageUrl, postId) {
   }
 }
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+function extractTikTokUrl(text) {
+  const m = (text || '').match(/https?:\/\/(?:[a-zA-Z0-9_-]+\.)?tiktok\.com\/[^\s]+/i);
+  return m ? m[0] : (text || '').trim();
+}
+
 function extractPostId(url) {
-  const m = (url || '').match(/\/photo\/(\d+)/);
+  const m = (url || '').match(/\/(?:photo|video)\/(\d+)/);
   return m ? m[1] : null;
 }
 

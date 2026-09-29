@@ -35,8 +35,10 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _pasteFromClipboard() async {
     final data = await Clipboard.getData(Clipboard.kTextPlain);
     if (data?.text != null && data!.text!.isNotEmpty) {
+      final text = data.text!.trim();
+      final cleanUrl = TikTokService.extractUrl(text) ?? text;
       setState(() {
-        _urlController.text = data.text!.trim();
+        _urlController.text = cleanUrl;
       });
       _fetchPhotos();
     }
@@ -44,10 +46,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // ── Lấy thông tin bài đăng ──────────────────────────────────────────────────
   Future<void> _fetchPhotos() async {
-    final url = _urlController.text.trim();
-    if (url.isEmpty) {
+    final rawText = _urlController.text.trim();
+    if (rawText.isEmpty) {
       _showToast('Vui lòng dán link bài ảnh TikTok');
       return;
+    }
+
+    final cleanUrl = TikTokService.extractUrl(rawText) ?? rawText;
+    if (cleanUrl != rawText) {
+      _urlController.text = cleanUrl;
     }
 
     FocusScope.of(context).unfocus();
