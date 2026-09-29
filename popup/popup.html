@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TikTok Photo Downloader — JiChangWook</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Alata&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <div class="app-container">
+
+    <!-- ── TOP HEADER ──────────────────────────────────────────────────────── -->
+    <header class="header">
+      <div class="header-left">
+        <div class="logo-badge">
+          <svg viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
+            <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.91a8.16 8.16 0 004.77 1.52V7a4.85 4.85 0 01-1-.31z"/>
+          </svg>
+        </div>
+        <div class="brand-info">
+          <div class="brand-title">
+            <span class="text-white">TIKTOK</span><span class="text-gradient"> PHOTO DL</span>
+            <span class="version-tag">PRO v1.2</span>
+          </div>
+          <div class="brand-sub">Không logo · Chất lượng gốc HD</div>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <!-- Nút Mở tab mới song song -->
+        <button id="btn-open-tab" class="btn-ghost-icon" title="Mở trong tab mới rộng hơn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+          </svg>
+          <span class="tooltip">Tab song song</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- ── INPUT SECTION ───────────────────────────────────────────────────── -->
+    <div class="input-card">
+      <div class="input-container">
+        <div class="input-icon-slot">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+          </svg>
+        </div>
+        <input
+          id="url-input"
+          type="url"
+          placeholder="Dán link ảnh TikTok (https://www.tiktok.com/@.../photo/...)"
+          autocomplete="off"
+          spellcheck="false"
+        />
+        <button id="btn-paste" class="btn-sm-text" title="Dán từ Clipboard">
+          Dán
+        </button>
+        <button id="btn-clear-input" class="btn-clear hidden" title="Xóa">
+          ✕
+        </button>
+      </div>
+
+      <div class="action-submit-row">
+        <!-- Current Tab Quick Button -->
+        <div id="current-tab-pill" class="tab-pill hidden">
+          <span class="live-dot"></span>
+          <span class="pill-text truncate">Phát hiện bài ảnh đang xem</span>
+          <button id="btn-use-tab" class="btn-pill-action">Lấy ngay</button>
+        </div>
+
+        <button id="btn-fetch" class="btn-primary-gradient">
+          <svg viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 mr-1.5">
+            <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"/>
+          </svg>
+          <span id="btn-fetch-text">Tìm tất cả ảnh</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ── FOLDER SELECTOR ROW ──────────────────────────────────────────────── -->
+    <div class="folder-card">
+      <div class="folder-card-left">
+        <div class="folder-status-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>
+          </svg>
+        </div>
+        <div class="folder-meta">
+          <span class="folder-label">Thư mục lưu ảnh:</span>
+          <span id="folder-name-display" class="folder-value truncate" title="Thư mục lưu mặc định">
+            Downloads / TikTok Photos
+          </span>
+        </div>
+      </div>
+      <button id="btn-pick-folder" class="btn-outline-folder" title="Chọn thư mục riêng trên máy tính">
+        <svg viewBox="0 0 20 20" fill="currentColor" class="w-3.5 h-3.5 mr-1">
+          <path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"/>
+        </svg>
+        <span>Chọn thư mục</span>
+      </button>
+    </div>
+
+    <!-- ── MAIN CONTENT DYNAMIC STATES ─────────────────────────────────────── -->
+    <main class="content-body">
+
+      <!-- 1. IDLE STATE -->
+      <div id="state-idle" class="state-container idle-view">
+        <div class="glow-orb"></div>
+        <div class="idle-illustration">
+          <div class="illustration-circle">
+            <svg viewBox="0 0 48 48" fill="none" class="w-12 h-12">
+              <rect x="6" y="8" width="36" height="32" rx="6" stroke="#2a2a38" stroke-width="2.5" fill="#14141c"/>
+              <circle cx="16" cy="18" r="4" fill="#fe2c55"/>
+              <path d="M6 34l10-10 8 8 10-12 8 8" stroke="#25f4ee" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </div>
+        <h3 class="idle-headline">Sẵn sàng tải ảnh TikTok</h3>
+        <p class="idle-description">
+          Dán link bài đăng ảnh bất kỳ hoặc bấm nút <strong class="text-cyan">Lấy ngay</strong> nếu đang mở bài trên TikTok.
+        </p>
+        <div class="feature-tags">
+          <span class="tag">✓ Không dính logo</span>
+          <span class="tag">✓ Chọn ảnh tùy ý</span>
+          <span class="tag">✓ Lưu đúng thư mục</span>
+        </div>
+      </div>
+
+      <!-- 2. LOADING STATE -->
+      <div id="state-loading" class="state-container hidden">
+        <div class="loader-wrap">
+          <div class="loader-spinner"></div>
+          <div class="loader-inner-dot"></div>
+        </div>
+        <p id="loading-message" class="loading-status">Đang tìm dữ liệu bài đăng...</p>
+        <p class="loading-sub">Hệ thống đang trích xuất tất cả ảnh gốc không logo</p>
+      </div>
+
+      <!-- 3. ERROR STATE -->
+      <div id="state-error" class="state-container hidden">
+        <div class="error-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fe2c55" stroke-width="2" class="w-8 h-8">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+          </svg>
+        </div>
+        <h4 class="error-heading">Không tải được ảnh</h4>
+        <p id="error-details" class="error-text">Đã xảy ra lỗi khi phân tích link.</p>
+        <div class="error-action-row">
+          <button id="btn-retry" class="btn-secondary">Thử lại</button>
+          <button id="btn-open-link" class="btn-secondary hidden">Mở bài đăng</button>
+        </div>
+      </div>
+
+      <!-- 4. PHOTOS VIEW STATE -->
+      <div id="state-photos" class="state-container hidden">
+        
+        <!-- Post Header Info Card -->
+        <div class="post-summary-card">
+          <div class="post-info-row">
+            <div class="author-avatar">@</div>
+            <div class="author-details">
+              <span id="post-author-name" class="author-name">@username</span>
+              <span id="post-badge" class="count-badge">16 ảnh</span>
+            </div>
+            <button id="btn-copy-links" class="btn-subtle-action" title="Sao chép toàn bộ link ảnh">
+              <svg viewBox="0 0 20 20" fill="currentColor" class="w-3.5 h-3.5 mr-1">
+                <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z"/>
+                <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z"/>
+              </svg>
+              Copy link
+            </button>
+          </div>
+          <p id="post-caption" class="post-caption-text">Tiêu đề bài đăng...</p>
+        </div>
+
+        <!-- Filter & Selection Bar -->
+        <div class="selection-bar">
+          <label class="custom-checkbox-container">
+            <input type="checkbox" id="check-select-all" checked />
+            <span class="custom-checkbox"></span>
+            <span class="select-all-label">Chọn tất cả</span>
+          </label>
+          <span id="selection-counter" class="counter-text">16 / 16 đã chọn</span>
+        </div>
+
+        <!-- Image Gallery Grid -->
+        <div id="gallery-grid" class="gallery-grid"></div>
+
+        <!-- Progress Bar (while downloading) -->
+        <div id="download-progress-wrap" class="progress-container hidden">
+          <div class="progress-track">
+            <div id="download-progress-bar" class="progress-fill"></div>
+          </div>
+          <div class="progress-meta">
+            <span id="progress-text" class="progress-label">Đang tải: 0/0 ảnh...</span>
+            <span id="progress-pct" class="progress-percentage">0%</span>
+          </div>
+        </div>
+
+        <!-- Notification Card (Success) -->
+        <div id="success-banner" class="success-banner hidden">
+          <div class="success-icon">✓</div>
+          <div class="success-body">
+            <div id="success-headline" class="success-title">Tải thành công!</div>
+            <div id="success-location" class="success-dest">Đã lưu vào thư mục</div>
+          </div>
+        </div>
+
+        <!-- Bottom Action Buttons -->
+        <div class="bottom-bar">
+          <button id="btn-back-new" class="btn-ghost">
+            ← Nhập link khác
+          </button>
+          <button id="btn-download-selected" class="btn-download-main">
+            <svg viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 mr-1.5">
+              <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"/>
+            </svg>
+            <span id="download-btn-text">Tải tất cả (16)</span>
+          </button>
+        </div>
+
+      </div><!-- /state-photos -->
+
+    </main>
+
+    <!-- ── FOOTER WITH COPYRIGHT ───────────────────────────────────────────── -->
+    <footer class="footer">
+      <div class="footer-content">
+        <span class="author-brand">JiChangWook - Wook</span>
+        <span class="footer-dot">•</span>
+        <a href="https://t.me/J2TeamDev" target="_blank" class="footer-link">@J2TeamDev Telegram</a>
+      </div>
+    </footer>
+
+  </div><!-- /app-container -->
+
+  <script src="popup.js"></script>
+</body>
+</html>

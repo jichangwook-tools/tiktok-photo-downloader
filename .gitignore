@@ -1,0 +1,26 @@
+# Git ignore for TikTok Photo Downloader Project
+
+# Flutter / Dart
+**/build/
+**/.dart_tool/
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+**/.packages
+**/android/.gradle
+**/android/local.properties
+**/android/app/build/
+
+# Node
+node_modules/
+npm-debug.log*
+
+# IDE & OS
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
+
+# Temporary
+scratch/
+*.tmp
