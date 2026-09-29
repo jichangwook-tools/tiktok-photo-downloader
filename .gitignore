@@ -24,3 +24,5 @@ Thumbs.db
 # Temporary
 scratch/
 *.tmp
+*.apk
+*.zip
